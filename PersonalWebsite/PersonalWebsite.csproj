@@ -90,13 +90,29 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\model.css" />
+    <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="js\jquery-3.3.1.min.js" />
+    <Content Include="Resources\img\1.jpg" />
+    <Content Include="Resources\img\2.jpg" />
+    <Content Include="Resources\img\3.jpg" />
+    <Content Include="Resources\img\4.jpg" />
+    <Content Include="Resources\img\5.jpg" />
+    <Content Include="Resources\img\6.jpg" />
+    <Content Include="Resources\img\logo.jpg" />
+    <Content Include="Resources\img\me.jpg" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
