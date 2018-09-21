@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<!--作者：孙新宇
+完成时间：2018年8月18日 8：37分
+拷贝代码请写明出处-->
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+		<style type="text/css">
+			#box {
+				background-color: blue;
+				list-style: none;
+				margin: 0px;
+				padding: 10px;
+				width: 600px;
+				height: 600px;
+				margin: auto;
+			}
+			
+			#box li {
+				width: 28px;
+				height: 28px;
+				background-color: red;
+				margin: 1px;
+				float: left;
+				display: table-cell;
+				text-align: center;
+				line-height: 28px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div style="text-align: center;">
+			<h1>扫雷小游戏</h1>
+			<ul id="box">
+			</ul>
+		</div>
+		<script>
+			$(function() {
+				var CountX = 20;
+				var CountY = 20;
+				var CountThunder = 20;
+				var count = CountX * CountX;
+				var thunder;
+				var CountRemoved = 0;
+				var box = $("#box");
+
+				$("#box").bind("contextmenu", function() {
+					return false;
+				})
+
+				for(var i = 0; i < count; i++) {
+					var block = $('<li></li>');
+					box.append(block);
+				}
+
+				function InitThunder() {
+					
+					thunder = [CountY];
+					for(var i = 0; i < CountY; i++) {
+						thunder[i] = [CountX];
+						for(var j=0;j<CountX;j++)
+						{
+							thunder[i][j]=0;
+						}
+					}
+					var index = 0;
+					var list = [];
+					for(; index < CountThunder;) {
+						var item = Math.floor(Math.random() * count);
+						if($.inArray(item, list) == -1) {
+							list.push(item);
+							index++;
+						}
+					}
+
+					for(var i = 0; i < list.length; i++) {
+						var current = Number(list[i]);
+						var x = Math.floor(current % CountX);
+						var y = Math.floor(current / CountX);
+						thunder[y][x] = 10;
+					}
+
+					if(thunder[0][0] > 9) {
+						thunder[1][0]++;
+						thunder[0][1]++;
+						thunder[1][1]++;
+					}
+					if(thunder[0][CountX - 1] > 9) {
+						thunder[0][CountX - 2]++;
+						thunder[1][CountX - 2]++;
+						thunder[1][CountX - 1]++;
+					}
+					if(thunder[CountY - 1][0] > 9) {
+						thunder[CountY - 2][0]++;
+						thunder[CountY - 2][1]++;
+						thunder[CountY - 1][1]++;
+					}
+					if(thunder[CountY - 1][CountX - 1] > 9) {
+						thunder[CountY - 2][CountX - 2]++;
+						thunder[CountY - 1][CountX - 2]++;
+						thunder[CountY - 2][CountX - 1]++;
+					}
+					for(var i = 1; i < CountX - 1; i++) {
+						if(thunder[0][i] > 9) {
+							thunder[0][i - 1]++;
+							thunder[0][i + 1]++;
+							thunder[1][i - 1]++;
+							thunder[1][i + 1]++;
+							thunder[1][i]++;
+						}
+						if(thunder[CountY - 1][i] > 9) {
+							thunder[CountY - 1][i - 1]++;
+							thunder[CountY - 1][i + 1]++;
+							thunder[CountY - 2][i - 1]++;
+							thunder[CountY - 2][i + 1]++;
+							thunder[CountY - 2][i]++;
+						}
+					}
+					for(var j = 1; j < CountY - 1; j++) {
+						if(thunder[j][0] > 9) {
+							thunder[j - 1][0]++;
+							thunder[j + 1][0]++;
+							thunder[j - 1][1]++;
+							thunder[j + 1][1]++;
+							thunder[j][1]++;
+						}
+						if(thunder[j][CountX - 1] > 9) {
+							thunder[j - 1][CountX - 1]++;
+							thunder[j + 1][CountX - 1]++;
+							thunder[j - 1][CountX - 2]++;
+							thunder[j + 1][CountX - 2]++;
+							thunder[j][CountX - 2]++;
+						}
+					}
+					for(var k = 1; k < CountY - 1; k++) {
+						for(var l = 1; l < CountX - 1; l++) {
+							if(thunder[k][l] > 9) {
+								thunder[k - 1][l - 1]++;
+								thunder[k - 1][l]++;
+								thunder[k - 1][l + 1]++;
+								thunder[k][l - 1]++;
+								thunder[k][l + 1]++;
+								thunder[k + 1][l - 1]++;
+								thunder[k + 1][l]++;
+								thunder[k + 1][l + 1]++;
+							}
+						}
+					}
+				}
+				$('#box li').mousedown(function(e) {
+					var control = $(this);
+					butThunder_MouseDown(control, e);
+				});
+
+				function butThunder_MouseDown(control, e) {
+					var color = control.css("background-color");
+					if(color.replace(/ /g, '') == "rgb(255,255,255)") {
+						return;
+					}
+					if(e != null && e.which == 3) //右键
+					{
+						if(control.html() == "") {
+							control.html("标")
+							control.css("background-color", "rgb(128,128,128)");
+						} else {
+							control.css("background-color", "red");
+							if(control.html() == "标") {
+								control.html("?")
+							} else {
+								control.html("");
+							}
+						}
+
+					} else if(e == null || e.which == 1) //左键
+					{
+						control.html("");
+						control.css("background-color", "rgb(255,255,255)");
+						CountRemoved++;
+						var current = control.index();
+						var x = Math.floor(current % CountX);
+						var y = Math.floor(current / CountX);
+						if(CountRemoved == 1) {
+							for(; thunder[y][x] != 0;) {
+								InitThunder();
+							}
+							openAround(x, y);
+							return;
+						}
+						if(thunder[y][x] > 9) {
+							alert("勇士，游戏结束！！！");
+							return;
+						}
+						if(thunder[y][x] != 0) {
+							var text=thunder[y][x].toString()
+							control.html( text);
+							if(CountRemoved+CountThunder==count)
+							alert("恭喜过关");
+							return;
+						}
+						openAround(x, y);
+
+						
+					}
+				}
+
+				function openAround(x, y) {
+					
+					if(y > 0) {
+						if(x > 0) {
+							var index = (y - 1) * CountX + x - 1;
+							butThunder_MouseDown($('#box').children('li').eq(index), null);
+						}
+						butThunder_MouseDown($('#box').children('li').eq((y - 1) * CountX + x), null);
+						if(x < CountX - 1) {
+							butThunder_MouseDown($('#box').children('li').eq((y - 1) * CountX + x + 1), null);
+						}
+					}
+					if(x > 0) {
+						butThunder_MouseDown($('#box').children('li').eq(y * CountX + x - 1), null);
+					}
+					if(x < CountX - 1) {
+						butThunder_MouseDown($('#box').children('li').eq(y * CountX + x + 1), null);
+					}
+					if(y < CountY - 1) {
+						if(x > 0) {
+							butThunder_MouseDown($('#box').children('li').eq((y + 1) * CountX + x - 1), null);
+						}
+						butThunder_MouseDown($('#box').children('li').eq((y + 1) * CountX + x), null);
+						if(x < CountY - 1) {
+							butThunder_MouseDown($('#box').children('li').eq((y + 1) * CountX + x + 1), null);
+						}
+					}
+				}
+
+				InitThunder();
+			});
+		</script>
+	</body>
+
+</html>
