@@ -130,6 +130,7 @@
     <Content Include="Views\web.config" />
     <Content Include="model.Master" />
     <None Include="packages.config" />
+    <Content Include="Resources\myz.zip" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
